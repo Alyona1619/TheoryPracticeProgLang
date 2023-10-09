@@ -19,25 +19,31 @@ def valid_expressions():
 
 class TestPrToIn:
 
-    def test_valid_prefix_expression(self, valid_expressions):
+    def test_valid_expression(self, valid_expressions):
         for prefix_expression, expected_infix_expression in valid_expressions:
             result = to_infix(prefix_expression)
             assert result == expected_infix_expression
 
-    def test_invalid_prefix_expression(self):
+    def test_invalid_expression(self):
         expression = "+ - 13 4 55 10"
         with pytest.raises(ValueError) as e_info:
             to_infix(expression)
 
-    def test_empty_prefix_expression(self):
+    def test_invalid_operand(self):
+        invalid_inputs = ["+ a 2", "/ 3 b", "* x y"]
+
+        for invalid_input in invalid_inputs:
+            with pytest.raises(ValueError, match="Неизвестный оператор или операнд"):
+                to_infix(invalid_input)
+
+    def test_empty_expression(self):
         expression = ""
         with pytest.raises(ValueError) as e_info:
             to_infix(expression)
 
-    # def test_operator_priority(self):
-    #     expression = "+ * 2 3 - 5 4"
-    #     result = to_infix(expression)
-    #     assert result == "((2 * 3) + (5 - 4))"
+    def test_more_operands(self):
+        with pytest.raises(ValueError, match="Операторов больше, чем нужно для операндов"):
+            to_infix("- - 1 2")
 
     def test_is_operator(self, operators):
         op1, op2, op3, op4 = operators
@@ -48,5 +54,5 @@ class TestPrToIn:
         assert res == res1 == res2 == res3 is True
 
     def test_invalid_operator(self):
-        with pytest.raises(ValueError, match=f"Неизвестный оператор: @"):
+        with pytest.raises(ValueError, match=f"Неизвестный оператор или операнд: @"):
             to_infix("@ 1 2")
