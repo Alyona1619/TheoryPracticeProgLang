@@ -14,23 +14,9 @@ def to_infix(expression):
             infix_expression = f"({operand1} {operator} {operand2})"
             stack.append(infix_expression)
         else:
-            raise ValueError(f"Неизестный оператор: {operator}")
+            raise ValueError(f"Неизвестный оператор: {operator}")
 
     if len(stack) != 1:
         raise ValueError("Некорректное выражение")
 
     return stack[0]
-
-
-def main():
-    try:
-        print("Конвертер префиксной нотации в инфиксную")
-        input_expression = input("Введите выражение в префиксной нотации: ")
-        infix_expression = to_infix(input_expression)
-        print("Инфиксная запись выражения:", infix_expression)
-    except ValueError as e:
-        print("Ошибка:", e)
-
-
-if __name__ == "__main__":
-    main()
