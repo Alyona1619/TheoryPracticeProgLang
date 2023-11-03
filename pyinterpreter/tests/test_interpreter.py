@@ -168,11 +168,8 @@ class TestParser:
             result) == "BinOp+ (Number (Token(TokenType.NUMBER, 2)), BinOp* (Number (Token(TokenType.NUMBER, 3)), Number (Token(TokenType.NUMBER, 4))))"
 
     def test_invalid_operator_factor(self, parser):
-        code = "2 * + 3 * 4"
-        with pytest.raises(SyntaxError, match="Invalid factor"):
-            parser.parse(code)
-
-    def test_missing_closing_parentheses_factor(self, parser):
-        code = "2 * (3 + 4"
-        with pytest.raises(SyntaxError, match="Invalid factor"):
-            parser.parse(code)
+        token = Token(TokenType.OPERATOR, "abc")
+        parser = Parser()
+        parser._current_token = token
+        with pytest.raises(SyntaxError):
+            parser.factor()

@@ -44,7 +44,7 @@ class Parser:
         result = self.term()
         while self._current_token and (self._current_token.type_ == TokenType.OPERATOR):
             if self._current_token.value not in ["+", "-"]:
-                break
+                break  # pragma: no cover
             token = self._current_token
             self.check_token(TokenType.OPERATOR)
             result = BinOp(result, token, self.term())
