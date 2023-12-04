@@ -11,11 +11,11 @@ class Iloc:
 
     def __getitem__(self, index):
         sorted_keys = sorted(self.special_hash_map.keys())
-        try:
+        if 0 <= index < len(sorted_keys):
             key = sorted_keys[index]
             return self.special_hash_map[key]
-        except IndexError:
-            return None
+        else:
+            raise IndexError("Index out of range")
 
 
 class Ploc:
@@ -30,7 +30,32 @@ class Ploc:
         return [param.strip() for param in params.replace('(', '').replace(')', '').split(',')]
 
     def parse_operator(self, operators):
-        return ''.join(char for char in operators if char in ['>', '<', '='])
+        valid_operators = ['>', '<', '=']
+        operator = ''.join(char for char in operators if char in valid_operators)
+        if not operator:
+            raise ValueError(f"Invalid operator: {operators}")
+        return operator
+
+    def compare_values(self, left_value, right_value, operator):
+        try:
+            left_value = float(left_value)
+            right_value = float(right_value)
+        except ValueError:
+            return False
+
+        match operator:
+            case '>':
+                return left_value > right_value
+            case '<':
+                return left_value < right_value
+            case '>=':
+                return left_value >= right_value
+            case '<=':
+                return left_value <= right_value
+            case '=':
+                return left_value == right_value
+            case '<>':
+                return left_value != right_value
 
     def satisfies_condition(self, key, requirements):
         split_key = self.parse_param(key)
@@ -40,85 +65,12 @@ class Ploc:
                 operator = self.parse_operator(requirements[i])
                 right_value = requirements[i].replace(operator, '')
 
-                # Handle both string and tuple keys
                 left_value = split_key[i] if isinstance(split_key[i], (int, float)) else str(split_key[i])
 
-                if operator == '>':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                elif operator == '<':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                elif operator == '>=':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                elif operator == '<=':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                elif operator == '=':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                elif operator == '<>':
-                    if not self.compare(left_value, right_value, operator):
-                        return False
-                else:
-                    raise ValueError("Invalid operator")
+                if not self.compare_values(left_value, right_value, operator):
+                    return False
             return True
         return False
 
-    def compare(self, left_value, right_value, operator):
-        try:
-            left_value = float(left_value)
-            right_value = float(right_value)
-        except ValueError:
-            return False
 
-        if operator == '>':
-            return left_value > right_value
-        elif operator == '<':
-            return left_value < right_value
-        elif operator == '>=':
-            return left_value >= right_value
-        elif operator == '<=':
-            return left_value <= right_value
-        elif operator == '=':
-            return left_value == right_value
-        elif operator == '<>':
-            return left_value != right_value
-        else:
-            return False
-
-    # def satisfies_condition(self, key, requirements):
-    #     split_key = self.parse_param(key)
-    #
-    #     if len(requirements) == len(split_key):
-    #         for i in range(len(requirements)):
-    #             operator = self.parse_operator(requirements[i])
-    #             right_value = requirements[i].replace(operator, '')
-    #
-    #             # Handle both string and tuple keys
-    #             left_value = split_key[i] if isinstance(split_key[i], (int, float)) else str(split_key[i])
-    #
-    #             if operator == '>':
-    #                 if left_value <= right_value:
-    #                     return False
-    #             elif operator == '<':
-    #                 if left_value >= right_value:
-    #                     return False
-    #             elif operator == '>=':
-    #                 if left_value < right_value:
-    #                     return False
-    #             elif operator == '<=':
-    #                 if left_value > right_value:
-    #                     return False
-    #             elif operator == '=':
-    #                 if left_value != right_value:
-    #                     return False
-    #             elif operator == '<>':
-    #                 if left_value == right_value:
-    #                     return False
-    #             else:
-    #                 raise ValueError("Invalid operator")
-    #         return True
-    #     return False
 
